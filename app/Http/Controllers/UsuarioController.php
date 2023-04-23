@@ -14,9 +14,12 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        $usuarios =User::with('roles')->get();
+       
+        $usuarios = User::with('roles')->get();
+
         
-        return view('dashboard.usuarios.index',['usuarios' => $usuarios]);
+        //return response()->json($usuarios);
+        return view('dashboard.usuarios.index',compact('usuarios'));
     }
 
     /**

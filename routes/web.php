@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RolController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,6 +33,7 @@ Route::middleware('auth')->group(function () {
     
     Route::group(['prefix' => 'dashboard'],function(){
         Route::resource('/post', PostController::class);
+        Route::resource('/reply',ReplyController::class);
         Route::resource('/category', CategoryController::class);
         Route::resource('/roles',RolController::class);
         Route::resource('/usuarios',UsuarioController::class);   

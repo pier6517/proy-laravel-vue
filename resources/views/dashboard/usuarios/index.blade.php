@@ -16,25 +16,31 @@
                     <table class="table table-dark table-striped">
                         <thead>
                             <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
                                 <th>Rol</th>
-                                <th>Usuario</th>
-                                <th>Contraseña</th>
+                                <th>Acciones</th>
                             </tr>    
                         </thead> 
                         <tbody>
-                            @forelse ($usuarios as $usuario )
+                            @foreach ($usuarios as $usuario )
                                 <tr>
                                     <td>{{ $usuario->name }}</td>
                                     
 
                                     <td>
+                                        {{ $usuario->email }}
                                     </td>  
                                     <td>
-                                    </td>  
+                                        {{ $usuario->roles->first()->name }}
+                                        
+                                    </td> 
+                                    <td> 
+                                    </td>    
                                 </tr>    
-                            @empty
-                                No hay registros
-                            @endforelse
+                        
+                                
+                            @endforeach
                         </tbody>       
                     </table>    
                 </div>

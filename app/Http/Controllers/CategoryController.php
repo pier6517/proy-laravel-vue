@@ -83,6 +83,8 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
+        $count =Post::where('category_id',$id)->count();
+
         $publicaciones=Post::where('category_id',$id)->count();
         if ($publicaciones>0 ){
             return back()->with('status','No es posible eliminar, posee publicaciones');

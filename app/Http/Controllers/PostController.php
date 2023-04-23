@@ -3,18 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
 use App\Models\Category;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Request\StorePost;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    function __construct()
+        {
+        $this->middleware('permission:ver-post|crear-post|editar-post|borrar-post',['only'=>['index','show']]);
+        $this->middleware('permission:crear-post',['only'=>['create','store']]);
+        $this->middleware('permission:editar-post',['only'=>['edit','update']]);
+        $this->middleware('permission:borrar-post',['only'=>['destroy']]);
+
+        }
+    
     public function index()
     {
-        $posts=Post::with('category')->paginate(5);
-        return view('dashboard.post.index',['post'=>$posts]);
+        $posts=Post::with('category','author','replies')->paginate(5);
+        return view('dashboard.post.index',['posts'=>$posts]);
     }
 
     /**
@@ -31,6 +40,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->user();
         $request->validate([
             'name'=>'required|min:3|max:100',
             'category_id'=>'required',
@@ -40,6 +50,7 @@ class PostController extends Controller
         $post->name=$request->input('name');
         $post->description=$request->input('description');
         $post->category_id=$request->input('category_id');
+        $post->author_id = $user->id;
         $post->save();
         return view("dashboard.post.message",['msg'=>"Publicacion creada con exito"]);
         
@@ -50,7 +61,16 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        $user = auth()->user();
+
+        if($user->hasRole('administrador')){
+            $post-load('category','author','replies.author');
+
+        }else{
+            $post->load('category','author','replies.author')->where('user_id',$user->id);
+
+        }
+       return response()->json($post);
     }
 
     /**
@@ -82,10 +102,18 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post=Post::find($id);
+$user =auth()->user();
+if($user->id != $post->author_id){
+   return back()->with('status','No puede eliminar ');    
+}else if($post->replies->count() > 0){
+    return back()->with('status','No puede elimiar');
+}else{
+
+        $post=Post::find($post->id);
         $post->delete();
-        return redirect("dashboard/post");
+        return redirect()->route('post.index')->with('status',"publicacion eliminada");
     }
+}
 }

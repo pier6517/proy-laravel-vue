@@ -33,8 +33,12 @@ class SeederTablaPermisos extends Seeder
             'ver-usuarios',
             'crear-usuarios',
             'editar-usuarios',
-            'borrar-usuarios'
-
+            'borrar-usuarios',
+            // replis
+            'reply-list',
+            'reply-create',
+            'reply-edit',
+            'reply-delete'
 
         ];
         foreach ($permisos as $permiso){
